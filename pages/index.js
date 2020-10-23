@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import { Element, scroller } from 'react-scroll';
 import Head from 'next/head'
 import Footer from '../components/Footer'
 import Swal from 'sweetalert2'
+
+const setupScroll = {
+    duration: 3000,
+    delay: 50,
+    smooth: true, // linear “easeInQuint” “easeOutCubic”,
+    offset: -10
+}
 
 const Home = () => {
 
@@ -109,6 +117,7 @@ const Home = () => {
         if (sumaSimbolos === nummensaje && nummensaje !== 0) {
             if (validate) {
                 setValidateSecond(true)
+                scroller.scrollTo("info", setupScroll)
             } else {
                 if (validateNull) {
                     Swal.fire({
@@ -129,7 +138,12 @@ const Home = () => {
     }, [mensaje]);
 
     const onChange = (e) => {
-        setNumSimbolos(parseInt(e.target.value))
+        if (parseInt(e.target.value) < 0) {
+            setNumSimbolos(parseInt(0))
+            e.target.value = 0
+        } else {
+            setNumSimbolos(parseInt(e.target.value))
+        }
     }
 
     const onChangeNumMensaje = (e) => {
@@ -145,7 +159,13 @@ const Home = () => {
             sumaProbabilidades += sim.probabilidad
         }
 
-        setNumMensaje(parseInt(e.target.value))
+        if (parseInt(e.target.value) < 0) {
+            setNumMensaje(parseInt(0))
+            e.target.value = 0
+        } else {
+            setNumMensaje(parseInt(e.target.value))
+        }
+        
     }
 
     const onChangeMensaje = (e, pos) => {
@@ -343,7 +363,7 @@ const Home = () => {
                 <main>
                     <label className="completo">
                         <p className="weight">Ingrese el número de simbolos a utilizar:</p>
-                        <input type="number" name="numSimbolos" onChange={onChange} />
+                        <input type="number" name="numSimbolos" value={numSimbolos} onChange={onChange} />
                     </label>
                     {
 
@@ -403,7 +423,7 @@ const Home = () => {
                 {
                     validateFirst && validateSecond
                     ?
-                    <main className="completo">
+                        <main className="completo" name="info">
                         <div className="completo top">
                             {
                                 simbolos.map(sim => (
@@ -416,7 +436,7 @@ const Home = () => {
                                 <div className="linea">
                                     {
                                         simbolos.map(sim => (
-                                            <span className="numero" style={{ left: `${sim.a * 300}px`, margin: '0'}}>{sim.a}</span>
+                                            <span className="numero" style={{ left: `${sim.a * 300}px`, margin: '0' }}>{sim.a.toFixed(2)}</span>
                                         ))
                                     }
                                     {
